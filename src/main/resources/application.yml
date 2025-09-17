@@ -1,0 +1,27 @@
+spring:
+  application:
+  name : my_blog
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/blog
+    username: postgres
+    password: 210009
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tagsSorter: alpha
+    operationsSorter: alpha
+server:
+  port: 8080
