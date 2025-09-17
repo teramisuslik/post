@@ -34,7 +34,7 @@ public class JwtTockenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = authHeader.replace("Bearer ", "");
+        String token = authHeader.substring(7);
         String username = jwtTockenUtils.getUsernameFromTocken(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

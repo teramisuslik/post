@@ -24,25 +24,25 @@ import static java.time.LocalTime.now;
 public class JwtTockenUtils {
 
     private String secret;
-    private String password;
+    private Integer lifetime;
 
     public void setSecret(String secret) {
         this.secret = secret;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLifetime(Integer lifetime) {
+        this.lifetime = lifetime;
     }
 
     public String generateTocken(UserDetails userDetails){
-        HashMap<String, Object> claims = new HashMap<String, Object>();
+        HashMap<String, Object> claims = new HashMap<>();
         if (userDetails instanceof User user){
             claims.put("role", user.getRole().name());
         }
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + lifetime * 60000))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(getSigningKey(),  SignatureAlgorithm.HS256)
                 .compact();

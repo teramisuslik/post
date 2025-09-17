@@ -1,11 +1,12 @@
 spring:
   application:
-  name : my_blog
+    name: my_blog
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/blog
+    url: jdbc:postgresql://localhost:5432/post
     username: postgres
-    password: 210009
+    password: "210009"
+
   jpa:
     show-sql: true
     hibernate:
@@ -13,15 +14,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  jwt:
+    secret: 0445b6b15da00f3d3836b6dbe1cd95cdb5e81066f83ffdceed3fbd9ad26d9bc2
+    lifetime: 1440
 
 springdoc:
   api-docs:
     enabled: true
-    path: /api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    tagsSorter: alpha
-    operationsSorter: alpha
+    url: /v3/api-docs
+    tags-sorter: alpha
+    operations-sorter: alpha
+
 server:
   port: 8080
