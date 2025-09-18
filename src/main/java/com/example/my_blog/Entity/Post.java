@@ -24,4 +24,8 @@ public class Post {
     @Schema(description = "текст статьи", example = "bla bla bla")
     private String text;
 
+    @JoinColumn(name = "user_id")
+    @ManyToOne
+    private User author;
+
 }

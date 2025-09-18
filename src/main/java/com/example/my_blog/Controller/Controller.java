@@ -1,5 +1,6 @@
 package com.example.my_blog.Controller;
 
+import com.example.my_blog.Entity.Post;
 import com.example.my_blog.Entity.User;
 import com.example.my_blog.Repocitory.UserRepository;
 import com.example.my_blog.Service.UserService;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +54,18 @@ public class Controller {
         return ResponseEntity.ok(massage);
     }
 
+    @PostMapping("/registerAuthor")
+    @Operation(
+            summary = "регистрируем автора",
+            description = "регистрируем автора"
+    )
+    @ApiResponse(responseCode = "200", description = "работает")
+    public ResponseEntity<String> registerAuthor(@RequestBody AuthRequest authRequest){
+        log.info("добавляем автора, вызов метода userService.register");
+        String massage = userService.registerAuthor(authRequest);
+        return ResponseEntity.ok(massage);
+    }
+
     @PostMapping("/login")
     @Operation(
             summary = "авторизируем пользователя",
@@ -62,6 +76,41 @@ public class Controller {
         User user = userService.login(authRequest);
         String tocken = jwtTockenUtils.generateTocken(user);
         return ResponseEntity.ok(new AuthResponse(tocken));
+    }
+
+    @GetMapping("/userInfo")
+    @Operation(
+            summary = "узнаем данные пользователя по токену",
+            description = "узнаем данные пользователя по токену"
+    )
+    @ApiResponse(responseCode = "200", description = "работает")
+    public ResponseEntity<User> getUserInfo(
+            @RequestHeader("Authorization") String token
+    ){
+        log.info("tocken {}", token);
+        token = token.substring(7);
+        String username = jwtTockenUtils.getUsernameFromTocken(token);
+        log.info("username {}", username);
+        return ResponseEntity.ok(userService.findUserByUsername(username));
+    }
+
+    @PostMapping("/addPost")
+    @PreAuthorize("hasRole('AUTHOR')")
+    @Operation(
+            summary = "добавляем пост автору",
+            description = "добавляем пост автору"
+    )
+    @ApiResponse(responseCode = "200", description = "работает")
+    public ResponseEntity<String> addPost(
+            @RequestBody Post post,
+            @RequestHeader("Authorization") String token
+    ){
+        log.info("tocken {}", token);
+        token = token.substring(7);
+        String username = jwtTockenUtils.getUsernameFromTocken(token);
+        log.info("username {}", username);
+        userService.createPost(post, username);
+        return ResponseEntity.ok("пост добавлен");
     }
 
 }

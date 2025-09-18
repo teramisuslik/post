@@ -1,6 +1,10 @@
 package com.example.my_blog.Entity;
 
 public enum Role {
-    User,
-    Author
+    USER,
+    AUTHOR;
+
+    public String getAuthority(){
+        return "ROLE_" + this.name();
+    }
 }

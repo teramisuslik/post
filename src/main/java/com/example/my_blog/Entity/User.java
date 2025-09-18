@@ -1,5 +1,6 @@
 package com.example.my_blog.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @Data
 @Builder
 @Table(name = "users")
+@JsonIncludeProperties({"id", "username", "role"})
 public class User implements UserDetails {
 
     @Id
@@ -38,9 +40,15 @@ public class User implements UserDetails {
     @Column()
     private Role role;
 
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "author"
+    )
+    private List<Post> posts;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 
     @Override
